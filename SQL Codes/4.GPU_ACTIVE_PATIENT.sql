@@ -1,0 +1,15 @@
+
+--SELECT ACTIVE PATIENTS
+SELECT p.Patient_UUID INTO GPU_ACTIVEPATIENTS
+FROM [dbo].DB_Medical_Director_V3_10_5_ePBRN_PATIENT_V1 p
+	JOIN
+	(
+		SELECT c.[Patient_UUID], COUNT(DISTINCT c.VISIT_DATE) AS VISIT#
+		FROM  [dbo].DB_Medical_Director_V3_10_5_ePBRN_CONSULTATIONS c
+	WHERE	[GRHANITE_Site] = 'NSW_GPU_FAIRFIELD'
+		AND		c.[VISIT_DATE] >= 2017-11-30
+		GROUP BY c.[Patient_UUID]
+		HAVING COUNT(DISTINCT c.VISIT_DATE) >= 3
+	) AS consulActive
+	ON p.[Patient_UUID] = consulActive.[Patient_UUID]
+WHERE p.Status_Code = 'A'
