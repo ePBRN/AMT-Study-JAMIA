@@ -1,7 +1,10 @@
 # Citation
 1. JAMIA paper
 
+
+
 2. Poster
+
 Farshid, Sanjay, Jonnagaddala, Jitendra, Guo, Guan, Wu, Mike, & Liaw, Siaw-Teng. (2018). Harmonising primary care data using international standard vocabularies for observational research. Zenodo. http://doi.org/10.5281/zenodo.2538863
 
 # AMT-Study-JAMIA
