@@ -11,13 +11,13 @@ x<-factor()
 y<-factor()
 
 
-obs<-148
-trp1<-62
-fap1<-0
-fan1<-86
-trp2<-141
+obs<-722
+trp1<-596
+fap1<-26
+fan1<-100
+trp2<-596
 fap2<-0
-fan2<-7
+fan2<-126
 
 tp1<-c(rep(1,trp1),rep(0,(obs-trp1)))
 fp1<-c(rep(1,(fap1+trp1)),rep(0,(obs-(trp1+fap1))))
@@ -35,7 +35,7 @@ computeFscorediff<-function(data,indices){
   r2<-(sum(sample$tp2)/sum(sample$fn2))
   fscore1<-(2*p1*r1/(p1+r1))
   fscore2<-(2*p2*r2/(p2+r2))
-  (fscore1-fscore2)}
+  (p1-p2)}
 
 b<-boot(data,computeFscorediff,10000)
 print(b)

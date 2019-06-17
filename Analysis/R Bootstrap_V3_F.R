@@ -1,59 +1,57 @@
 ## Example 2: based on an example from the wikipedia page:
 # https://en.wikipedia.org/wiki/Confusion_matrix
-install.packages("boot")
 library(boot)
-library(simpleboot)
 library(ggplot2)
+
 pval<-numeric()
 cil<-numeric()
 ciu<-numeric()
 x<-factor()
 y<-factor()
 
-
-obs<-148
-trp1<-62
-fap1<-0
-fan1<-86
-trp2<-141
-fap2<-0
-fan2<-7
-
-tp1<-c(rep(1,trp1),rep(0,(obs-trp1)))
-fp1<-c(rep(1,(fap1+trp1)),rep(0,(obs-(trp1+fap1))))
-fn1<-c(rep(1,(fan1+trp1)),rep(0,(obs-(trp1+fan1))))
-tp2<-c(rep(1,trp2),rep(0,(obs-trp2)))
-fp2<-c(rep(1,(fap2+trp2)),rep(0,(obs-(trp2+fap2))))
-fn2<-c(rep(1,(fan2+trp2)),rep(0,(obs-(trp2+fan2))))
-data<-data.frame(tp1,fp1,fn1,tp2,fp2,fn2)
-
 computeFscorediff<-function(data,indices){
   sample<-data[indices,]                
-  p1<-(sum(sample$tp1)/sum(sample$fp1))
-  p2<-(sum(sample$tp2)/sum(sample$fp2))
-  r1<-(sum(sample$tp1)/sum(sample$fn1))
-  r2<-(sum(sample$tp2)/sum(sample$fn2))
+  p1<-(sum(sample$Predicted1)/sum(sample$Predicted1))
+  p2<-(sum(sample$Predicted2)/sum(sample$Predicted2))
+  r1<-(sum(sample$Predicted1)/sum(sample$Actual))
+  r2<-(sum(sample$Predicted2)/sum(sample$Actual))
   fscore1<-(2*p1*r1/(p1+r1))
   fscore2<-(2*p2*r2/(p2+r2))
   (fscore1-fscore2)}
 
-b<-boot(data,computeFscorediff,10000)
+
+
+#Enter results into here or load file csv in this format as sample.
+sample <-
+  data.frame(Predicted1 = c(rep(1,    84 + 0),
+                           rep(0,   3 + 0)),
+             Actual    = c(rep(c(1, 0), times = c(87, 0)),
+                           rep(c(1, 0), times = c(0, 0))),
+             Predicted2 = c(rep(1,    82 + 0),
+                           rep(0,   5 + 0)),
+             stringsAsFactors = FALSE)
+
+
+
+
+b<-boot(sample,computeFscorediff,10000)
 print(b)
 
-# Scores
-
-p1<-(sum(data$tp1)/sum(data$fp1))
-p2<-(sum(data$tp2)/sum(data$fp2))
-r1<-(sum(data$tp1)/sum(data$fn1))
-r2<-(sum(data$tp2)/sum(data$fn2))
+#show metrics
+sample<-data[indices,]                
+p1<-(sum(sample$Predicted1)/sum(sample$Predicted1))
+p2<-(sum(sample$Predicted2)/sum(sample$Predicted2))
+r1<-(sum(sample$Predicted1)/sum(sample$Actual))
+r2<-(sum(sample$Predicted2)/sum(sample$Actual))
 fscore1<-(2*p1*r1/(p1+r1))
 fscore2<-(2*p2*r2/(p2+r2))
-(sum(data$tp1)/sum(data$fp1))
-(sum(data$tp2)/sum(data$fp2))
-(sum(data$tp1)/sum(data$fn1))
-(sum(data$tp2)/sum(data$fn2))
-(2*p1*r1/(p1+r1))
-(2*p2*r2/(p2+r2))
+(fscore1-fscore2)
+p1
+p2
+r1
+r2
+fscore1
+fscore2
 # Nonparametric Bootstrap Confidence Intervals -  the basic bootstrap interval
 
 conf<-boot.ci(boot.out=b,type=c("basic"))
@@ -75,7 +73,7 @@ remove(b,b.under.H0)
 plot<-data.frame(pval,cil,ciu)
 
 
-write.csv(plot,file="3.bootstrap_pvalue_Compare.csv")
+write.csv(plot,file="3.bootstrap_pvalue.csv")
 
 ##################################################################
 ##PLots and graphs from here
